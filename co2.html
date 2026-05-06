@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Carbon Tracker</title>
+</head>
+<body>
+
+  <h2>🌿 Carbon Footprint Calculator</h2>
+
+  <input id="km" placeholder="Enter km travelled">
+  <button onclick="calculate()">Calculate</button>
+
+  <p id="result"></p>
+
+  <script>
+    function calculate() {
+      let km = document.getElementById("km").value;
+      let carbon = km * 0.12;
+      document.getElementById("result").innerText =
+        "Your emission: " + carbon + " kg CO2";
+    }
+  </script>
+  <style>
+  body {
+    font-family: Arial;
+    text-align: center;
+    margin-top: 100px;
+  }
+  input, button {
+    padding: 10px;
+    margin: 10px;
+  }
+</style>
+
+</body>
+</html>
