@@ -61,6 +61,7 @@
   <br>
 
   <button onclick="calculate()">Calculate</button>
+  <button onclick="darkMode()">🌙 Dark Mode</button>
   <button onclick="resetApp()">Reset</button>
   <button onclick="copyResult()">Copy Result</button>
 
@@ -68,6 +69,10 @@
 
   <script>
 
+    function darkMode() {
+      document.body.style.backgroundColor = "dark green";
+      document.body.style.color = "white";
+}
     function calculate() {
 
       let km = document.getElementById("km").value;
