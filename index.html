@@ -22,6 +22,7 @@
       background-color: #4CAF50;
       color: white;
       border: none;
+      border-radius: 5px;
     }
 
     button:hover {
@@ -58,17 +59,22 @@
   <br>
 
   <button onclick="calculate()">Calculate</button>
+  <button onclick="resetApp()">Reset</button>
+  <button onclick="copyResult()">Copy Result</button>
 
   <p id="result"></p>
 
   <script>
+
     function calculate() {
+
       let km = document.getElementById("km").value;
       let factor = document.getElementById("type").value;
       let units = document.getElementById("units").value || 0;
 
       if (!km || km <= 0) {
-        document.getElementById("result").innerText = "Enter valid distance!";
+        document.getElementById("result").innerText =
+          "Enter valid distance!";
         return;
       }
 
@@ -80,37 +86,72 @@
 
       if (total < 5) {
         message = "🌱 Low emission";
-      } else if (total < 15) {
+      }
+      else if (total < 15) {
         message = "⚠️ Moderate emission";
-      } else {
+      }
+      else {
         message = "🔴 High emission";
       }
+
+      let travelPct = (travelCO2 / total) * 100;
+      let elecPct = (electricityCO2 / total) * 100;
 
       let resultBox = document.getElementById("result");
 
       resultBox.innerText =
         "Travel CO₂: " + travelCO2.toFixed(2) + " kg\n" +
         "Electricity CO₂: " + electricityCO2.toFixed(2) + " kg\n" +
-        "Total: " + total.toFixed(2) + " kg → " + message;
+        "Total: " + total.toFixed(2) + " kg → " + message + "\n\n" +
+        "Breakdown → Travel: " +
+        travelPct.toFixed(0) + "% | Electricity: " +
+        elecPct.toFixed(0) + "%";
 
-      // color change
-      if (total < 5) resultBox.style.color = "green";
-      else if (total < 15) resultBox.style.color = "orange";
-      else resultBox.style.color = "red";
+      // Color feedback
+      if (total < 5) {
+        resultBox.style.color = "green";
+      }
+      else if (total < 15) {
+        resultBox.style.color = "orange";
+      }
+      else {
+        resultBox.style.color = "red";
+      }
 
-      // save last result
-      localStorage.setItem("lastResult", total.toFixed(2));
+      // Save result
+      localStorage.setItem("lastResult", resultBox.innerText);
     }
 
-    // show last result on reload
+    // Reset app
+    function resetApp() {
+      document.getElementById("km").value = "";
+      document.getElementById("units").value = "";
+      document.getElementById("result").innerText = "";
+
+      localStorage.removeItem("lastResult");
+    }
+
+    // Copy result
+    function copyResult() {
+      let text = document.getElementById("result").innerText;
+
+      navigator.clipboard.writeText(text);
+
+      alert("Result copied!");
+    }
+
+    // Show last result on reload
     window.onload = function () {
+
       let last = localStorage.getItem("lastResult");
+
       if (last) {
-        document.getElementById("result").innerText =
-          "Last total CO₂: " + last + " kg";
+        document.getElementById("result").innerText = last;
       }
     };
+
   </script>
 
 </body>
 </html>
+     
