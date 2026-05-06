@@ -2,12 +2,56 @@
 <html>
 <head>
   <title>Carbon Tracker</title>
+
+  <style>
+    body {
+      font-family: Arial;
+      text-align: center;
+      margin-top: 100px;
+      background-color: #f4f4f4;
+    }
+
+    input, select, button {
+      padding: 10px;
+      margin: 10px;
+      font-size: 16px;
+    }
+
+    button {
+      cursor: pointer;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    #result {
+      font-size: 20px;
+      margin-top: 20px;
+      font-weight: bold;
+    }
+  </style>
 </head>
+
 <body>
 
   <h2>🌿 Carbon Footprint Calculator</h2>
 
-  <input id="km" placeholder="Enter km travelled">
+  <input id="km" type="number" placeholder="Enter km travelled">
+
+  <br>
+
+  <select id="type">
+    <option value="0.21">🚗 Car</option>
+    <option value="0.12">🏍️ Bike</option>
+    <option value="0.05">🚆 Train</option>
+  </select>
+
+  <br>
+
   <button onclick="calculate()">Calculate</button>
 
   <p id="result"></p>
@@ -15,22 +59,28 @@
   <script>
     function calculate() {
       let km = document.getElementById("km").value;
-      let carbon = km * 0.12;
+      let factor = document.getElementById("type").value;
+
+      if (!km || km <= 0) {
+        document.getElementById("result").innerText = "Enter valid distance!";
+        return;
+      }
+
+      let carbon = km * factor;
+      let message = "";
+
+      if (carbon < 5) {
+        message = "🌱 Low emission";
+      } else if (carbon < 15) {
+        message = "⚠️ Moderate emission";
+      } else {
+        message = "🔴 High emission";
+      }
+
       document.getElementById("result").innerText =
-        "Your emission: " + carbon + " kg CO2";
+        "CO₂: " + carbon.toFixed(2) + " kg → " + message;
     }
   </script>
-  <style>
-  body {
-    font-family: Arial;
-    text-align: center;
-    margin-top: 100px;
-  }
-  input, button {
-    padding: 10px;
-    margin: 10px;
-  }
-</style>
 
 </body>
 </html>
