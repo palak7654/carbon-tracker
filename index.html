@@ -92,8 +92,11 @@
       else if (total < 25) {
         message = "⚠️ Moderate emission";
       }
+      else if (total < 40) {
+        message = "🔴 High emission";
+      }
       else {
-        message = "🔴 very High emission";
+        message = "🚨 Very high emission";
       }
 
       let travelPct = (travelCO2 / total) * 100;
