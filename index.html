@@ -7,7 +7,7 @@
     body {
       font-family: Arial;
       text-align: center;
-      margin-top: 100px;
+      margin-top: 80px;
       background-color: #f4f4f4;
     }
 
@@ -32,6 +32,7 @@
       font-size: 20px;
       margin-top: 20px;
       font-weight: bold;
+      white-space: pre-line;
     }
   </style>
 </head>
@@ -52,6 +53,10 @@
 
   <br>
 
+  <input id="units" type="number" placeholder="Electricity units (kWh)">
+
+  <br>
+
   <button onclick="calculate()">Calculate</button>
 
   <p id="result"></p>
@@ -60,26 +65,51 @@
     function calculate() {
       let km = document.getElementById("km").value;
       let factor = document.getElementById("type").value;
+      let units = document.getElementById("units").value || 0;
 
       if (!km || km <= 0) {
         document.getElementById("result").innerText = "Enter valid distance!";
         return;
       }
 
-      let carbon = km * factor;
+      let travelCO2 = km * factor;
+      let electricityCO2 = units * 0.82;
+      let total = travelCO2 + electricityCO2;
+
       let message = "";
 
-      if (carbon < 5) {
+      if (total < 5) {
         message = "🌱 Low emission";
-      } else if (carbon < 15) {
+      } else if (total < 15) {
         message = "⚠️ Moderate emission";
       } else {
         message = "🔴 High emission";
       }
 
-      document.getElementById("result").innerText =
-        "CO₂: " + carbon.toFixed(2) + " kg → " + message;
+      let resultBox = document.getElementById("result");
+
+      resultBox.innerText =
+        "Travel CO₂: " + travelCO2.toFixed(2) + " kg\n" +
+        "Electricity CO₂: " + electricityCO2.toFixed(2) + " kg\n" +
+        "Total: " + total.toFixed(2) + " kg → " + message;
+
+      // color change
+      if (total < 5) resultBox.style.color = "green";
+      else if (total < 15) resultBox.style.color = "orange";
+      else resultBox.style.color = "red";
+
+      // save last result
+      localStorage.setItem("lastResult", total.toFixed(2));
     }
+
+    // show last result on reload
+    window.onload = function () {
+      let last = localStorage.getItem("lastResult");
+      if (last) {
+        document.getElementById("result").innerText =
+          "Last total CO₂: " + last + " kg";
+      }
+    };
   </script>
 
 </body>
