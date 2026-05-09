@@ -140,8 +140,27 @@
       }
 
       // Save result
-      localStorage.setItem("lastResult", resultBox.innerText);
+     localStorage.setItem("lastResult", resultBox.innerText);
+      const ctx = document.getElementById('co2Chart');
+
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: ['Travel CO₂', 'Electricity CO₂'],
+    datasets: [{
+      label: 'Carbon Emission',
+      data: [travelCO2, electricityCO2],
+      borderWidth: 1
+    }]
+  },
+  options: {
+    scales: {
+      y: {
+        beginAtZero: true
+      }
     }
+  }
+});
 
     // Reset app
     function resetApp() {
