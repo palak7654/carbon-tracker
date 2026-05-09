@@ -2,6 +2,7 @@
 <html>
 <head>
   <title>Carbon Tracker</title>
+
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
@@ -12,16 +13,19 @@
       background-color: #f4f4f4;
       transition: background-color 0.5s, color 0.5s;
     }
-   .dark-mode {
-      background-color: black;
-      color: white;
-}
 
-.dark-mode input {
-  background-color: #222;
-  color: white;
-  border: 1px solid white;
-}
+    .dark-mode {
+      background-color: #1b1b1b;
+      color: white;
+    }
+
+    .dark-mode input,
+    .dark-mode select {
+      background-color: #222;
+      color: white;
+      border: 1px solid white;
+    }
+
     input, select, button {
       padding: 10px;
       margin: 10px;
@@ -45,6 +49,11 @@
       margin-top: 20px;
       font-weight: bold;
       white-space: pre-line;
+    }
+
+    #co2Chart {
+      max-width: 500px;
+      margin: 30px auto;
     }
   </style>
 </head>
@@ -77,22 +86,21 @@
   <button onclick="copyResult()">Copy Result</button>
 
   <p id="result"></p>
-  <canvas id="co2Chart" width="300" height="200"></canvas>
+
+  <canvas id="co2Chart"></canvas>
 
   <script>
-
     function darkMode() {
-  document.body.classList.toggle("dark-mode");
-}
-    function calculate() {
+      document.body.classList.toggle("dark-mode");
+    }
 
+    function calculate() {
       let km = document.getElementById("km").value;
       let factor = document.getElementById("type").value;
       let units = document.getElementById("units").value || 0;
 
       if (!km || km <= 0) {
-        document.getElementById("result").innerText =
-          "Enter valid distance!";
+        document.getElementById("result").innerText = "Enter valid distance!";
         return;
       }
 
@@ -104,14 +112,11 @@
 
       if (total < 10) {
         message = "🌱 Low emission";
-      }
-      else if (total < 25) {
+      } else if (total < 25) {
         message = "⚠️ Moderate emission";
-      }
-      else if (total < 40) {
+      } else if (total < 40) {
         message = "🔴 High emission";
-      }
-      else {
+      } else {
         message = "🚨 Very high emission";
       }
 
@@ -124,74 +129,71 @@
         "Travel CO₂: " + travelCO2.toFixed(2) + " kg\n" +
         "Electricity CO₂: " + electricityCO2.toFixed(2) + " kg\n" +
         "Total: " + total.toFixed(2) + " kg → " + message + "\n\n" +
-        "Breakdown → Travel: " +
-        travelPct.toFixed(0) + "% | Electricity: " +
-        elecPct.toFixed(0) + "%";
+        "Breakdown → Travel: " + travelPct.toFixed(0) +
+        "% | Electricity: " + elecPct.toFixed(0) + "%";
 
-      // Color feedback
-      if (total < 5) {
+      if (total < 10) {
         resultBox.style.color = "green";
-      }
-      else if (total < 15) {
+      } else if (total < 25) {
         resultBox.style.color = "orange";
-      }
-      else {
+      } else {
         resultBox.style.color = "red";
       }
 
-      // Save result
-     localStorage.setItem("lastResult", resultBox.innerText);
-      const ctx = document.getElementById('co2Chart');
+      localStorage.setItem("lastResult", resultBox.innerText);
 
-new Chart(ctx, {
-  type: 'bar',
-  data: {
-    labels: ['Travel CO₂', 'Electricity CO₂'],
-    datasets: [{
-      label: 'Carbon Emission',
-      data: [travelCO2, electricityCO2],
-      borderWidth: 1
-    }]
-  },
-  options: {
-    scales: {
-      y: {
-        beginAtZero: true
+      let ctx = document.getElementById("co2Chart");
+
+      if (window.myChart) {
+        window.myChart.destroy();
       }
-    }
-  }
-});
 
-    // Reset app
+      window.myChart = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: ["Travel CO₂", "Electricity CO₂"],
+          datasets: [{
+            label: "Carbon Emission (kg)",
+            data: [travelCO2, electricityCO2],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+
     function resetApp() {
       document.getElementById("km").value = "";
       document.getElementById("units").value = "";
       document.getElementById("result").innerText = "";
 
+      if (window.myChart) {
+        window.myChart.destroy();
+      }
+
       localStorage.removeItem("lastResult");
     }
 
-    // Copy result
     function copyResult() {
       let text = document.getElementById("result").innerText;
-
       navigator.clipboard.writeText(text);
-
       alert("Result copied!");
     }
 
-    // Show last result on reload
     window.onload = function () {
-
       let last = localStorage.getItem("lastResult");
 
       if (last) {
         document.getElementById("result").innerText = last;
       }
     };
-
   </script>
 
 </body>
 </html>
-     
